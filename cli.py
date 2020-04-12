@@ -7,7 +7,6 @@ import os
 
 calendars_result = service.calendarList().list().execute()
 calendars = calendars_result.get('items', [])
-print(calendars)
 for index, cal in enumerate(calendars):
     print(f'{index}) {cal["summary"]}')
 
