@@ -1,12 +1,19 @@
-"""
+"""stasbr
+
 Usage:
   working_schedule.py all
-  working_schedule.py [--prev] month MONTH [to MONTHS-COUNT]
+  working_schedule.py [--from MONTH-FROM] [--to MONTH-TO]
+  working_schedule.py [--last] LAST-COUNT
   working_schedule.py (-h | --help)
 
 Options:
   -h --help     Show this screen.
   --last        use MONTH to shift back from current month
+
+Examples:
+    working_schedule.py --prev month 1
+    working_schedule.py month 11 - [Nov] 
+    working_schedule.py month 1 to 3 - [Jan, March]
 """
 
 import datetime
@@ -27,25 +34,27 @@ if __name__ == '__main__':
         fromDate = datetime.datetime(2019, 5, 14, tzinfo=datetime.timezone.utc).astimezone().replace(hour=0, minute=0)
         toDate = nowDate
 
-    elif arguments['month']:
-        month = int(arguments['MONTH'])
-        if arguments['--prev']:
-            fromDate = nowDate.replace(day=1, hour=0, minute=0, second=0) - relativedelta(months=month)
-        else:
-            fromDate = datetime.datetime(year=datetime.datetime.now().year, month=month, day=1,
-                                         tzinfo=datetime.timezone.utc).astimezone().replace(hour=0, minute=0)
+    elif arguments['--last']:
+        last_count = int(arguments['LAST-COUNT'])
+        fromDate = nowDate.replace(
+            day=1, hour=0, minute=0, second=0) - relativedelta(months=last_count)
 
+    if arguments['--from']:
+        month_from = int(arguments['MONTHS-FROM'])
+        fromDate = datetime.datetime(year=datetime.datetime.now().year, month=month_from, day=1,
+                                        tzinfo=datetime.timezone.utc).astimezone().replace(hour=0, minute=0)
         if fromDate < datetime.datetime(2019, 5, 14, tzinfo=datetime.timezone.utc) \
                 .astimezone().replace(hour=0, minute=0):
             fromDate = datetime.datetime(2019, 5, 14, 0, 0, tzinfo=datetime.timezone.utc) \
                 .astimezone().replace(hour=0, minute=0)
 
-        if arguments['to']:
-            monthsCount = int(arguments['MONTHS-COUNT'])
-        else:
-            monthsCount = 1
-        toDate = fromDate.replace(day=1) + relativedelta(months=monthsCount) - relativedelta(minutes=1)
-
+    if arguments['--to']:
+        month_to = int(arguments['MONTHS-TO'])
+    else:
+        month_to = 1
+    
+    toDate = fromDate.replace(day=1) + relativedelta(months=month_to) - relativedelta(minutes=1)
+    
 print('From', fromDate)
 print('To', toDate)
 service = get_service.service

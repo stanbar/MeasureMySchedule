@@ -49,3 +49,22 @@ def strfdelta(tdelta, fmt='{D:02}d {H:02}h {M:02}m {S:02}s', inputtype='timedelt
         if field in desired_fields and field in constants:
             values[field], remainder = divmod(remainder, constants[field])
     return f.format(fmt, **values)
+
+
+def safe_input(prompt):
+    text = input(prompt).strip()
+    try:
+        value = int(text)
+    except ValueError:
+        print('Invalid input, please enter number value')
+        text = None
+
+    while not text:
+        text = input(prompt).strip()
+        try:
+            value = int(text)
+        except ValueError:
+            print('Invalid input, please enter number value')
+            text = None
+
+    return value
