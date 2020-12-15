@@ -22,3 +22,6 @@ def starting_date(calendar_id):
     if(calendar_id == '76k2cbn06li92mc3d61a64f504@group.calendar.google.com'):
         # KTI
         return None
+    if(calendar_id == 'iktllra764qlpaqnni9o5gc5pc@group.calendar.google.com'):
+        # Feelmo
+        return datetime(2020, 11, 15, tzinfo=datetime.timezone.utc).astimezone().replace(hour=0, minute=0)
