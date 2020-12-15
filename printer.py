@@ -4,26 +4,53 @@ from dateutil.relativedelta import relativedelta
 import get_service
 from utils import strfdelta
 from docopt import docopt
+from core import Result
+from functools import reduce
 
 
-def print_csv(working_schedule, csv_file_path):
+def print_csv(result: Result, csv_file_path):
     with open(csv_file_path, "w+") as file:
-        print("Data", "Czas pracy", sep=',', file=file)
-        for date in working_schedule:
-            print(date, working_schedule[date], sep=',', file=file)
+        print("Data", "Duration", sep=",", file=file)
+        for date in result.by_date:
+            print(
+                date, strfdelta(result.by_date[date], "{H}h {M}m"), sep=",", file=file
+            )
+
+        print(
+            "Sum",
+            strfdelta(reduce(lambda a, b: a + b, result.by_date.values()), "{H}h"),
+            sep=",",
+            file=file,
+        )
+
+        print("", sep=",", file=file)
+        print("Task", "Duration", sep=",", file=file)
+        for task in result.by_task:
+            print(
+                task,
+                strfdelta(result.by_task[task], "{H}h {M}m"),
+                sep=",",
+                file=file,
+            )
+
+        print(
+            "Sum",
+            strfdelta(reduce(lambda a, b: a + b, result.by_task.values()), "{H}h"),
+            sep=",",
+            file=file,
+        )
 
 
-def print_pdf_and_html(working_schedule, pdf_file_path, html_file_path):
+def print_pdf_and_html(result: Result, pdf_file_path, html_file_path):
     dataFrameable = dict()
-    for key, value in working_schedule.items():
+    for key, value in result.by_date.items():
         dataFrameable[key] = (value,)
 
-    df = pd.DataFrame.from_dict(
-        dataFrameable, orient='index', columns=['Czas pracy'])
-    total_duration_iso = strfdelta(df["Czas pracy"].sum(), "{H}h")
+    df = pd.DataFrame.from_dict(dataFrameable, orient="index", columns=["Duration"])
+    total_duration_iso = strfdelta(df["Duration"].sum(), "{H}h")
 
     df = df.applymap(lambda entry: strfdelta(entry, "{H}h {M}m"))
-    df.loc['Suma'] = total_duration_iso
+    df.loc["Sum"] = total_duration_iso
 
     df.to_html(html_file_path, header=True, index=True)
     pdfkit.from_file(html_file_path, pdf_file_path)

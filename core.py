@@ -1,62 +1,104 @@
-
 from datetime import datetime, timezone, timedelta
 from dateutil.relativedelta import relativedelta
 import os
 from get_service import service
+from typing import NamedTuple
 
 nowDate = datetime.now(timezone.utc).astimezone()
-fromDate = datetime(2019, 5, 14, tzinfo=timezone.utc).astimezone().replace(
-    hour=0, minute=0)
-toDate = nowDate
+fromDate = (
+    datetime(2019, 5, 14, tzinfo=timezone.utc).astimezone().replace(hour=0, minute=0)
+)
 
 
-def last_months(calendar_id, last_months: int):
-    from_date = nowDate.replace(
-        day=1, hour=0, minute=0, second=0) - relativedelta(months=last_months)
+def last_months(last_months: int):
+    from_date = nowDate.replace(day=1, hour=0, minute=0, second=0) - relativedelta(
+        months=last_months
+    )
 
-    to_date = from_date.replace(
-        day=1) + relativedelta(months=1) - relativedelta(minutes=1)
-
-    return from_date, to_date
-
-
-def from_to(calendar_id, month_from: int, month_to: int, year=None):
-    from_date = datetime(year=datetime.now().year, month=month_from, day=1,
-                         tzinfo=timezone.utc).astimezone().replace(hour=0, minute=0)
-    if from_date < datetime(2019, 5, 14, tzinfo=timezone.utc) \
-            .astimezone().replace(hour=0, minute=0):
-        from_date = datetime(2019, 5, 14, 0, 0, tzinfo=timezone.utc) \
-            .astimezone().replace(hour=0, minute=0)
-
-    to_date = from_date.replace(
-        day=1) + relativedelta(months=1) - relativedelta(minutes=1)
+    to_date = (
+        from_date.replace(day=1) + relativedelta(months=1) - relativedelta(minutes=1)
+    )
 
     return from_date, to_date
 
 
-def execute(calendar_id, from_date, to_date) -> dict:
-    events_result = service.events().list(calendarId=calendar_id,
-                                          maxResults=2500,
-                                          singleEvents=True,
-                                          timeMax=to_date.isoformat(),
-                                          timeMin=from_date.isoformat(),
-                                          orderBy='startTime').execute()
-    events = events_result.get('items', [])
-    working_schedule = dict()
+def last_days(last_days: int):
+    from_date = nowDate.replace(day=1, hour=0, minute=0, second=0) - relativedelta(
+        days=last_days
+    )
+
+    return from_date, nowDate
+
+
+def from_to(month_from: int, month_to: int, year=None):
+    from_date = (
+        datetime(year=datetime.now().year, month=month_from, day=1, tzinfo=timezone.utc)
+        .astimezone()
+        .replace(hour=0, minute=0)
+    )
+    if from_date < datetime(2019, 5, 14, tzinfo=timezone.utc).astimezone().replace(
+        hour=0, minute=0
+    ):
+        from_date = (
+            datetime(2019, 5, 14, 0, 0, tzinfo=timezone.utc)
+            .astimezone()
+            .replace(hour=0, minute=0)
+        )
+
+    to_date = (
+        from_date.replace(day=1) + relativedelta(months=1) - relativedelta(minutes=1)
+    )
+
+    return from_date, to_date
+
+
+class Result(NamedTuple):
+    by_date: dict
+    by_task: dict
+
+
+def execute(calendar_id, from_date, to_date) -> Result:
+    events_result = (
+        service.events()
+        .list(
+            calendarId=calendar_id,
+            maxResults=2500,
+            singleEvents=True,
+            timeMax=to_date.isoformat(),
+            timeMin=from_date.isoformat(),
+            orderBy="startTime",
+        )
+        .execute()
+    )
+    events = events_result.get("items", [])
+    by_date = dict()
+    by_task = dict()
     if not events:
-        print('No events found.')
+        print("No events found.")
+
+    # https://developers.google.com/resources/api-libraries/documentation/calendar/v3/python/latest/calendar_v3.events.html#get
     for event in events:
+        title = event["summary"]
+        description = event.get("description")
         start = datetime.fromisoformat(
-            event['start'].get('dateTime', event['start'].get('date')))
+            event["start"].get("dateTime", event["start"].get("date"))
+        )
         if start < fromDate:
             start = fromDate
         end = datetime.fromisoformat(
-            event['end'].get('dateTime', event['end'].get('date')))
-        if end > toDate:
-            end = toDate
+            event["end"].get("dateTime", event["end"].get("date"))
+        )
+        if end > nowDate:
+            end = nowDate
         working_hours = end - start
+        print(f'date: "{end.date()}" title: "{title}"; description: "{description}"')
+        by_date.setdefault(end.date(), timedelta())
+        by_date[end.date()] += working_hours
+        if description and description.startswith("FEEL"):
+            by_task.setdefault(description, timedelta())
+            by_task[description] += working_hours
+        else:
+            by_task.setdefault(title, timedelta())
+            by_task[title] += working_hours
 
-        working_schedule.setdefault(end.date(), timedelta())
-        working_schedule[end.date()] += working_hours
-
-    return working_schedule
+    return Result(by_date, by_task)

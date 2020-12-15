@@ -27,26 +27,30 @@ print("2) last x months")
 print("3) x month")
 print("4) from x month to y month")
 print("5) from x month to y month in year z")
+print("6) last x days")
 
 
 option = safe_input("Choose option: ")
 if option == 1:
-    from_date, to_date = core.last_months(picked_cal_id, 1)
+    from_date, to_date = core.last_months(1)
 elif option == 2:
     last_months = safe_input("Start from months ago: ")
-    from_date, to_date = core.last_months(picked_cal_id, last_months)
+    from_date, to_date = core.last_months(last_months)
 elif option == 3:
     month = safe_input("Month: ")
-    from_date, to_date = core.from_to(picked_cal_id, month, month)
+    from_date, to_date = core.from_to(month, month)
 elif option == 4:
     month_from = safe_input("From month: ")
     month_to = safe_input("To month: ")
-    from_date, to_date = core.from_to(picked_cal_id, month_from, month_to)
+    from_date, to_date = core.from_to(month_from, month_to)
 elif option == 5:
     month_from = safe_input("From month: ")
     month_to = safe_input("To month: ")
     year = safe_input("Year: ")
-    from_date, to_date = core.from_to(picked_cal_id, month_from, month_to, year)
+    from_date, to_date = core.from_to(month_from, month_to, year)
+elif option == 6:
+    last_days = safe_input("Last days: ")
+    from_date, to_date = core.last_days(last_days)
 
 print("From", from_date)
 print("To", to_date)
@@ -68,8 +72,8 @@ os.makedirs(f"out/{calendar_name}/csv", exist_ok=True)
 os.makedirs(f"out/{calendar_name}/html", exist_ok=True)
 os.makedirs(f"out/{calendar_name}/pdf", exist_ok=True)
 
-working_schedule = core.execute(picked_cal_id, from_date, to_date)
+result = core.execute(picked_cal_id, from_date, to_date)
 
-print_csv(working_schedule, csv_file_path)
-print_pdf_and_html(working_schedule, pdf_file_path, html_file_path)
+print_csv(result, csv_file_path)
+print_pdf_and_html(result, pdf_file_path, html_file_path)
 print(f"Saved to: \n{csv_file_path} \n{pdf_file_path} \n{html_file_path}")
