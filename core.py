@@ -26,8 +26,9 @@ def last_days(last_days: int):
     from_date = nowDate.replace(day=1, hour=0, minute=0, second=0) - relativedelta(
         days=last_days
     )
+    to_date = nowDate.replace(hour=0, minute=0, second=0) - relativedelta(seconds=1)
 
-    return from_date, nowDate
+    return from_date, to_date
 
 
 def from_to(month_from: int, month_to: int, year=None):

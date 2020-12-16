@@ -10,7 +10,7 @@ from functools import reduce
 
 def print_csv(result: Result, csv_file_path):
     with open(csv_file_path, "w+") as file:
-        print("Data", "Duration", sep=",", file=file)
+        print("Date", "Duration", sep=",", file=file)
         for date in result.by_date:
             print(
                 date, strfdelta(result.by_date[date], "{H}h {M}m"), sep=",", file=file
