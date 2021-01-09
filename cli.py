@@ -2,7 +2,7 @@ import core
 from get_service import service
 from printer import print_csv, print_pdf_and_html
 from slugify import slugify
-from utils import safe_input
+from utils import safe_input, safe_input_many
 import os
 
 calendars_result = service.calendarList().list().execute()
@@ -10,16 +10,21 @@ calendars = calendars_result.get("items", [])
 for index, cal in enumerate(calendars):
     print(f'{index}) {cal["summary"]}')
 
-index = safe_input("Chose calendar index:")
+indexes = safe_input_many("Chose calendar index[s] separate by comma (,):")
 
-if index < 0 or index >= len(calendars):
-    print("Illegal index")
-    exit(0)
+picked_cal_names = []
+picked_cal_ids = []
+for index in indexes:
+    if index < 0 or index >= len(calendars):
+        print("Illegal index")
+        exit(0)
 
-picked_cal = calendars[index]
-picked_cal_id = calendars[index]["id"]
-picked_cal_name = picked_cal["summary"]
-print(f'picked {picked_cal["summary"]}')
+    picked_cal = calendars[index]
+    picked_cal_id = calendars[index]["id"]
+    picked_cal_ids.append(picked_cal_id)
+    picked_cal_name = picked_cal["summary"]
+    picked_cal_names.append(picked_cal_name)
+
 
 print("Chose how would you like to specify range:")
 print("1) last month")
@@ -60,19 +65,22 @@ if from_date.year == from_date.year and from_date.month == to_date.month:
 else:
     file_name = f'{from_date.strftime("%b-%Y")}_to_{to_date.strftime("%b-%Y")}'
 
-calendar_name = slugify(picked_cal_name)
 
-csv_file_path = f"out/{calendar_name}/csv/{file_name}.csv"
-html_file_path = f"out/{calendar_name}/html/{file_name}.html"
-pdf_file_path = f"out/{calendar_name}/pdf/{file_name}.pdf"
+directory_name = "+".join(
+    [slugify(picked_cal_name) for picked_cal_name in picked_cal_names]
+)
+
+csv_file_path = f"out/{directory_name}/csv/{file_name}.csv"
+html_file_path = f"out/{directory_name}/html/{file_name}.html"
+pdf_file_path = f"out/{directory_name}/pdf/{file_name}.pdf"
 
 os.makedirs("out", exist_ok=True)
-os.makedirs(f"out/{calendar_name}", exist_ok=True)
-os.makedirs(f"out/{calendar_name}/csv", exist_ok=True)
-os.makedirs(f"out/{calendar_name}/html", exist_ok=True)
-os.makedirs(f"out/{calendar_name}/pdf", exist_ok=True)
+os.makedirs(f"out/{directory_name}", exist_ok=True)
+os.makedirs(f"out/{directory_name}/csv", exist_ok=True)
+os.makedirs(f"out/{directory_name}/html", exist_ok=True)
+os.makedirs(f"out/{directory_name}/pdf", exist_ok=True)
 
-result = core.execute(picked_cal_id, from_date, to_date)
+result = core.execute(picked_cal_ids, from_date, to_date)
 
 print_csv(result, csv_file_path)
 print_pdf_and_html(result, pdf_file_path, html_file_path)

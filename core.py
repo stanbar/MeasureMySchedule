@@ -58,48 +58,51 @@ class Result(NamedTuple):
     by_task: dict
 
 
-def execute(calendar_id, from_date, to_date) -> Result:
-    events_result = (
-        service.events()
-        .list(
-            calendarId=calendar_id,
-            maxResults=2500,
-            singleEvents=True,
-            timeMax=to_date.isoformat(),
-            timeMin=from_date.isoformat(),
-            orderBy="startTime",
-        )
-        .execute()
-    )
-    events = events_result.get("items", [])
+def execute(calendar_ids, from_date, to_date) -> Result:
     by_date = dict()
     by_task = dict()
-    if not events:
-        print("No events found.")
+    for calendar_id in calendar_ids:
+        events_result = (
+            service.events()
+            .list(
+                calendarId=calendar_id,
+                maxResults=2500,
+                singleEvents=True,
+                timeMax=to_date.isoformat(),
+                timeMin=from_date.isoformat(),
+                orderBy="startTime",
+            )
+            .execute()
+        )
+        events = events_result.get("items", [])
+        if not events:
+            print("No events found.")
 
-    # https://developers.google.com/resources/api-libraries/documentation/calendar/v3/python/latest/calendar_v3.events.html#get
-    for event in events:
-        title = event["summary"]
-        description = event.get("description")
-        start = datetime.fromisoformat(
-            event["start"].get("dateTime", event["start"].get("date"))
-        )
-        if start < fromDate:
-            start = fromDate
-        end = datetime.fromisoformat(
-            event["end"].get("dateTime", event["end"].get("date"))
-        )
-        if end > nowDate:
-            end = nowDate
-        working_hours = end - start
-        print(f'date: "{end.date()}" title: "{title}"; description: "{description}"')
-        by_date.setdefault(end.date(), timedelta())
-        by_date[end.date()] += working_hours
-        if description and description.startswith("FEEL"):
-            by_task.setdefault(description, timedelta())
-            by_task[description] += working_hours
-        else:
-            by_task.setdefault(title, timedelta())
-            by_task[title] += working_hours
+        # https://developers.google.com/resources/api-libraries/documentation/calendar/v3/python/latest/calendar_v3.events.html#get
+        for event in events:
+            title = event["summary"]
+            description = event.get("description")
+            start = datetime.fromisoformat(
+                event["start"].get("dateTime", event["start"].get("date"))
+            )
+            if start < fromDate:
+                start = fromDate
+            end = datetime.fromisoformat(
+                event["end"].get("dateTime", event["end"].get("date"))
+            )
+            if end > nowDate:
+                end = nowDate
+            working_hours = end - start
+            print(
+                f'date: "{end.date()}" title: "{title}"; description: "{description}"'
+            )
+            by_date.setdefault(end.date(), timedelta())
+            by_date[end.date()] += working_hours
+            if description and description.startswith("FEEL"):
+                by_task.setdefault(description, timedelta())
+                by_task[description] += working_hours
+            else:
+                by_task.setdefault(title, timedelta())
+                by_task[title] += working_hours
 
     return Result(by_date, by_task)
