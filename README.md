@@ -1,8 +1,10 @@
 # MeasureMySchedule
+
 Python utils for measuring Google Calendar schedule
 
 ## Installation
-```
+
+```console
 git clone https://github.com/stasbar/MeasureMySchedule.git
 cd MeasureMySchedule
 python -m venv venv
@@ -14,6 +16,19 @@ Obtain Google API `credentials.json` by following [this docs](https://developers
 
 ## Usage
 
+Execute cli flow with
+
 `python cli.py`
 
+after completing all steps the program will output
 
+```console
+out
+└── {calendar_name}
+    ├── csv
+    │   ├── {daterange}.csv
+    ├── html
+    │   ├── {daterange}.html
+    └── pdf
+        └── {daterange}.pdf
+```
