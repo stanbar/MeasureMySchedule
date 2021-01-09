@@ -4,7 +4,7 @@ Python utils for measuring Google Calendar schedule
 
 ## Installation
 
-```console
+```bash
 git clone https://github.com/stasbar/MeasureMySchedule.git
 cd MeasureMySchedule
 python -m venv venv
