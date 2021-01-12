@@ -26,10 +26,12 @@ def print_csv(result: Result, csv_file_path):
 
         print("", sep=",", file=file)
         print("Task", "Duration", sep=",", file=file)
-        for task in result.by_task:
+        for task, date in collections.OrderedDict(
+            sorted(result.by_task.items())
+        ).items():
             print(
                 task,
-                strfdelta(result.by_task[task], "{H}h {M}m"),
+                strfdelta(date, "{H}h {M}m"),
                 sep=",",
                 file=file,
             )
