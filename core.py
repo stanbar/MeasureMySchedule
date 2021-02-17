@@ -23,7 +23,7 @@ def last_months(last_months: int):
 
 
 def last_days(last_days: int):
-    from_date = nowDate.replace(day=1, hour=0, minute=0, second=0) - relativedelta(
+    from_date = nowDate.replace(hour=0, minute=0, second=0) - relativedelta(
         days=last_days
     )
     to_date = nowDate.replace(hour=0, minute=0, second=0) - relativedelta(seconds=1)
