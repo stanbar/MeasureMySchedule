@@ -35,7 +35,10 @@ print("5) from x month to y month in year z")
 print("6) last x days")
 
 
+from_date = datetime.now()
+to_date = datetime.now()
 option = safe_input("Choose option: ")
+
 if option == 1:
     from_date, to_date = core.last_months(1)
 elif option == 2:

@@ -16,7 +16,7 @@ def last_months(last_months: int):
     )
 
     to_date = (
-        from_date.replace(day=1) + relativedelta(months=1) - relativedelta(minutes=1)
+        from_date.replace(day=1) + relativedelta(months=last_months) - relativedelta(minutes=1)
     )
 
     return from_date, to_date
@@ -47,7 +47,7 @@ def from_to(month_from: int, month_to: int, year=None):
         )
 
     to_date = (
-        from_date.replace(day=1) + relativedelta(months=1) - relativedelta(minutes=1)
+            datetime(year=datetime.now().year, month=month_to, day=1, tzinfo=timezone.utc) + relativedelta(months=1) - relativedelta(minutes=1)
     )
 
     return from_date, to_date
