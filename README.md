@@ -1,14 +1,14 @@
 # MeasureMySchedule
 
-Python utils for measuring Google Calendar schedule
+Tool for measuring Google Calendar schedule
 
 ## Installation
 
+To generate PDFs install [wkhtmltopdf](https://wkhtmltopdf.org)
+
 ```bash
-git clone https://github.com/stasbar/MeasureMySchedule.git
-cd MeasureMySchedule
 python -m venv venv
-source venv/bin/activate
+. venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -16,11 +16,11 @@ Obtain Google API `credentials.json` by following [this docs](https://developers
 
 ## Usage
 
-Execute cli flow with
+Execute CLI flow with
 
-`python cli.py`
+`python ./cli.py`
 
-after completing all steps the program will output
+the output can be found in
 
 ```console
 out
