@@ -2,7 +2,8 @@ import core
 from get_service import service
 from printer import print_csv, print_pdf_and_html
 from slugify import slugify
-from utils import safe_input, safe_input_many
+from utils import safe_input, safe_input_many, safe_input_str
+from datetime import datetime
 import os
 
 calendars_result = service.calendarList().list().execute()
@@ -63,6 +64,8 @@ elif option == 6:
 print("From", from_date)
 print("To", to_date)
 
+filter = safe_input_str("Filter phrase: ")
+
 if from_date.year == from_date.year and from_date.month == to_date.month:
     file_name = from_date.strftime("%b-%Y")
 else:
@@ -83,7 +86,7 @@ os.makedirs(f"out/{directory_name}/csv", exist_ok=True)
 os.makedirs(f"out/{directory_name}/html", exist_ok=True)
 os.makedirs(f"out/{directory_name}/pdf", exist_ok=True)
 
-result = core.execute(picked_cal_ids, from_date, to_date)
+result = core.execute(picked_cal_ids, from_date, to_date, filter)
 
 print_csv(result, csv_file_path)
 print_pdf_and_html(result, pdf_file_path, html_file_path)

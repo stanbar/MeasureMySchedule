@@ -58,7 +58,7 @@ class Result(NamedTuple):
     by_task: dict
 
 
-def execute(calendar_ids, from_date, to_date) -> Result:
+def execute(calendar_ids, from_date, to_date, filter: str) -> Result:
     by_date = dict()
     by_task = dict()
     for calendar_id in calendar_ids:
@@ -81,6 +81,11 @@ def execute(calendar_ids, from_date, to_date) -> Result:
         # https://developers.google.com/resources/api-libraries/documentation/calendar/v3/python/latest/calendar_v3.events.html#get
         for event in events:
             title = event["summary"]
+
+            # handle filter
+            if filter is not None and filter.lower() not in title.lower():
+                continue
+
             description = event.get("description")
             start = datetime.fromisoformat(
                 event["start"].get("dateTime", event["start"].get("date"))
