@@ -2,9 +2,16 @@
 
 Tool for measuring Google Calendar schedule
 
-## Installation
+# Installation
+
+## wkhtmltopdf
 
 To generate PDFs install [wkhtmltopdf](https://wkhtmltopdf.org)
+```bash
+brew install --cask wkhtmltopdf
+```
+
+## Python packages
 
 ```bash
 python -m venv venv
@@ -14,7 +21,7 @@ pip install -r requirements.txt
 
 Obtain Google API `credentials.json` by following [this docs](https://developers.google.com/calendar/quickstart/python).
 
-## Usage
+# Usage
 
 Execute CLI flow with
 
