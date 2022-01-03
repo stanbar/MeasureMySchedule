@@ -99,7 +99,7 @@ def execute(calendar_ids, from_date, to_date, filter: str) -> Result:
                 end = nowDate
             working_hours = end - start
             print(
-                f'date: "{end.date()}" title: "{title}"; description: "{description}"'
+                    f'date: "{end.date()}" title: "{title}"; description: "{description}"; start: "{start}" end: "{end}" duration: "{working_hours}"'
             )
             by_date.setdefault(end.date(), timedelta())
             by_date[end.date()] += working_hours

@@ -76,6 +76,21 @@ directory_name = "+".join(
     [slugify(picked_cal_name) for picked_cal_name in picked_cal_names]
 )
 
+print("Chose how would you like to print results:")
+print("1) human readable (%H h %m min)")
+print("2) processing friendly (%m)")
+
+output_format = safe_input("Choose option: ")
+
+if output_format == 1:
+    pass
+elif output_format == 2:
+    pass
+else:
+    print("Illegal option")
+    exit(0)
+
+
 csv_file_path = f"out/{directory_name}/csv/{file_name}.csv"
 html_file_path = f"out/{directory_name}/html/{file_name}.html"
 pdf_file_path = f"out/{directory_name}/pdf/{file_name}.pdf"
@@ -88,6 +103,6 @@ os.makedirs(f"out/{directory_name}/pdf", exist_ok=True)
 
 result = core.execute(picked_cal_ids, from_date, to_date, filter)
 
-print_csv(result, csv_file_path)
+print_csv(result, csv_file_path, output_format)
 print_pdf_and_html(result, pdf_file_path, html_file_path)
 print(f"Saved to: \n{csv_file_path} \n{pdf_file_path} \n{html_file_path}")
