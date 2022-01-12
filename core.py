@@ -2,7 +2,7 @@ from datetime import datetime, timezone, timedelta
 from dateutil.relativedelta import relativedelta
 import os
 from get_service import service
-from typing import NamedTuple
+from typing import NamedTuple, TypedDict
 
 nowDate = datetime.now(timezone.utc).astimezone()
 fromDate = (
@@ -52,13 +52,17 @@ def from_to(month_from: int, month_to: int, year=None):
 
     return from_date, to_date
 
+class ActivityEntry(TypedDict):
+    duration: timedelta
+    start: datetime
+    end: datetime
 
 class Result(NamedTuple):
-    by_date: dict
-    by_task: dict
+    by_date: dict[str, ActivityEntry]
+    by_task: dict[str, ActivityEntry]
 
 
-def execute(calendar_ids, from_date, to_date, filter: str) -> Result:
+def execute(calendar_ids, from_date: datetime, to_date: datetime, filter: str) -> Result:
     by_date = dict()
     by_task = dict()
     for calendar_id in calendar_ids:
@@ -101,13 +105,15 @@ def execute(calendar_ids, from_date, to_date, filter: str) -> Result:
             print(
                     f'date: "{end.date()}" title: "{title}"; description: "{description}"; start: "{start}" end: "{end}" duration: "{working_hours}"'
             )
-            by_date.setdefault(end.date(), timedelta())
-            by_date[end.date()] += working_hours
+
+            by_date.setdefault(end.date(), ActivityEntry(duration = timedelta(), start = start, end=end))
+            by_date[end.date()]['duration'] += working_hours
+
             if description and description.startswith("FEEL"):
-                by_task.setdefault(description, timedelta())
-                by_task[description] += working_hours
+                by_task.setdefault(description,  ActivityEntry(duration = timedelta(), start = start, end=end))
+                by_task[description]['duration']+= working_hours
             else:
-                by_task.setdefault(title, timedelta())
-                by_task[title] += working_hours
+                by_task.setdefault(title, ActivityEntry(duration = timedelta(), start = start, end=end))
+                by_task[title]['duration'] += working_hours
 
     return Result(by_date, by_task)

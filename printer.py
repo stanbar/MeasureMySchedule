@@ -1,10 +1,7 @@
 import pandas as pd
 import pdfkit
 import collections
-from dateutil.relativedelta import relativedelta
-import get_service
 from utils import strfdelta
-from docopt import docopt
 from core import Result
 from functools import reduce
 
@@ -14,7 +11,7 @@ def print_csv(result: Result, csv_file_path, output_format):
     elif output_format == 2:
         print_csv_processing_friendly(result, csv_file_path)
     else:
-        print("Unsupported output format")
+        print(f'Unsupported output format {output_format}')
         exit(0)
 
 
@@ -24,7 +21,7 @@ def print_csv_processing_friendly(result: Result, csv_file_path):
         for date, value in collections.OrderedDict(
             sorted(result.by_date.items())
         ).items():
-            print(date, str(round(float(strfdelta(value, "{M}")) / 60, 2)), sep=",", file=file)
+            print(date, str(round(float(strfdelta(value['duration'], "{M}")) / 60, 2)), sep=",", file=file)
 
         print("", sep=",", file=file)
         print("Task", "Duration", sep=",", file=file)
@@ -33,7 +30,7 @@ def print_csv_processing_friendly(result: Result, csv_file_path):
         ).items():
             print(
                 task,
-                str(round(float(strfdelta(date, "{M}")) / 60, 2)),
+                str(round(float(strfdelta(date['duration'], "{M}")) / 60, 2)),
                 sep=",",
                 file=file,
             )
@@ -44,11 +41,12 @@ def print_csv_human_readable(result: Result, csv_file_path):
         for date, value in collections.OrderedDict(
             sorted(result.by_date.items())
         ).items():
-            print(date, strfdelta(value, "{H}h {M}m"), sep=",", file=file)
+            print(date, strfdelta(value['duration'], "{H}h {M}m"), sep=",", file=file)
 
+        durations_by_date = map(lambda a : a['duration'] ,result.by_date.values())
         print(
             "Sum",
-            strfdelta(reduce(lambda a, b: a + b, result.by_date.values()), "{H}h"),
+            strfdelta(reduce(lambda a, b: a + b, durations_by_date), "{H}h"),
             sep=",",
             file=file,
         )
@@ -60,14 +58,15 @@ def print_csv_human_readable(result: Result, csv_file_path):
         ).items():
             print(
                 task,
-                strfdelta(date, "{H}h {M}m"),
+                strfdelta(date['duration'], "{H}h {M}m"),
                 sep=",",
                 file=file,
             )
 
+        durations_by_task = map(lambda a : a['duration'] ,result.by_task.values())
         print(
             "Sum",
-            strfdelta(reduce(lambda a, b: a + b, result.by_task.values()), "{H}h"),
+            strfdelta(reduce(lambda a, b: a + b, durations_by_task), "{H}h"),
             sep=",",
             file=file,
         )
