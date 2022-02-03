@@ -91,13 +91,14 @@ def execute(calendar_ids, from_date: datetime, to_date: datetime, filter: str) -
                 continue
 
             description = event.get("description")
+            print(event["start"].get("dateTime", event["start"].get("date")))
             start = datetime.fromisoformat(
-                event["start"].get("dateTime", event["start"].get("date"))
+                event["start"].get("dateTime", event["start"].get("date")).replace('Z', '+00:00')
             )
             if start < fromDate:
                 start = fromDate
             end = datetime.fromisoformat(
-                event["end"].get("dateTime", event["end"].get("date"))
+                event["end"].get("dateTime", event["end"].get("date")).replace('Z', '+00:00')
             )
             if end > nowDate:
                 end = nowDate
