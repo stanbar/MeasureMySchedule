@@ -38,6 +38,8 @@ def input_range_option():
     print("4) from x month to y month")
     print("5) from x month to y month in year z")
     print("6) last x days")
+    print("7) last week")
+    print("8) prev week")
 
     from_date = datetime.now()
     to_date = datetime.now()
@@ -63,6 +65,11 @@ def input_range_option():
     elif option == 6:
         last_days = safe_input("Last days: ")
         from_date, to_date = core.last_days(last_days)
+    elif option == 7:
+        from_date, to_date = core.last_week()
+    elif option == 8:
+        prev_weeks = safe_input("Prev week: ")
+        from_date, to_date = core.prev_week(prev_weeks)
 
     return from_date, to_date
 

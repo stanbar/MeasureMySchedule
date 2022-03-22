@@ -52,6 +52,22 @@ def from_to(month_from: int, month_to: int, year=None):
 
     return from_date, to_date
 
+def prev_week(prev_week: int):
+    if prev_week < 1:
+        raise Exception('you have to go back for at least 1 week')
+
+    weekday = nowDate.weekday()
+    from_date = nowDate - timedelta(days=weekday, weeks=prev_week)
+    from_date = from_date.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    to_date = nowDate - timedelta(days=weekday, weeks=prev_week-1)
+    to_date = to_date.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    return from_date, to_date
+
+def last_week():
+    return prev_week(1)
+
 class ActivityEntry(TypedDict):
     duration: timedelta
     start: datetime
