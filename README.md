@@ -27,15 +27,15 @@ Execute CLI flow with
 
 `python ./cli.py`
 
-the output can be found in
+the output will be generated to the following directories:
 
 ```console
 out
 └── {calendar_name}
     ├── csv
-    │   ├── {daterange}.csv
+    │   ├── {date-range}.csv
     ├── html
-    │   ├── {daterange}.html
+    │   ├── {date-range}.html
     └── pdf
-        └── {daterange}.pdf
+        └── {date-range}.pdf
 ```
