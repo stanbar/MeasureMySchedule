@@ -118,6 +118,12 @@ def compute_file_paths():
     pdf_file_path = f"out/{directory_name}/pdf/{file_name}.pdf"
     return csv_file_path, html_file_path, pdf_file_path
 
+def compute_file_paths_latest():
+    csv_file_path = f"out/{directory_name}/csv/latest.csv"
+    html_file_path = f"out/{directory_name}/html/latest.html"
+    pdf_file_path = f"out/{directory_name}/pdf/latest.pdf"
+    return csv_file_path, html_file_path, pdf_file_path
+
 def create_directories(directory_name):
     os.makedirs("out", exist_ok=True)
     os.makedirs(f"out/{directory_name}", exist_ok=True)
@@ -132,11 +138,13 @@ output_format = input_format()
 file_name = compute_file_name(from_date, to_date)
 directory_name = compute_directory_name(picked_cal_names)
 csv_file_path, html_file_path, pdf_file_path = compute_file_paths()
+csv_file_path_latest, html_file_path_latest, pdf_file_path_latest = compute_file_paths_latest()
 create_directories(directory_name)
 result = core.execute(picked_cal_ids, from_date, to_date, filter)
 print_csv(result, csv_file_path, output_format)
+print_csv(result, csv_file_path_latest, output_format)
 print_pdf_and_html(result, pdf_file_path, html_file_path)
 
 print("From", from_date)
 print("To", to_date)
-print(f"Saved to: \n{csv_file_path} \n{pdf_file_path} \n{html_file_path}")
+print(f"Saved to: \n{csv_file_path_latest} \n{csv_file_path} \n{pdf_file_path} \n{html_file_path}")
