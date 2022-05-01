@@ -43,7 +43,7 @@ def print_csv_processing_friendly(result: Result, csv_file_path):
             sorted(result.by_task.items())
         ).items():
             print(
-                task,
+                f'"{task}"',
                 str(round(float(strfdelta(date['duration'], "{M}")) / 60, 2)),
                 str(round(float(date['start'].strftime("%H") ) / 60, 2)),
                 str(round(float(date['end'].strftime("%H") ) / 60, 2)),
@@ -73,7 +73,7 @@ def print_csv_human_readable(result: Result, csv_file_path):
             sorted(result.by_task.items())
         ).items():
             print(
-                task,
+                f'"{task}"',
                 strfdelta(date['duration'], "{H}h {M}m"),
                 sep=",",
                 file=file,
