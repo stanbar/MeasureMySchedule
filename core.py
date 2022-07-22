@@ -65,6 +65,20 @@ def prev_week(prev_week: int):
 
     return from_date, to_date
 
+def last_weeks(weeks: int):
+    if weeks < 1:
+        raise Exception('you have to go back for at least 1 week')
+
+    weekday = nowDate.weekday()
+    from_date = nowDate.replace(hour=0, minute=0, second=0) - relativedelta(
+        days=weekday,
+        weeks=weeks
+    )
+    to_date = nowDate - timedelta(days=weekday)
+    to_date = to_date.replace(hour=0, minute=0, second=0) - relativedelta(seconds=1)
+
+    return from_date, to_date
+    
 def last_week():
     return prev_week(1)
 
