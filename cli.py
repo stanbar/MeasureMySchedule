@@ -45,6 +45,7 @@ def input_range_option():
     print("6) last x days")
     print("7) last week")
     print("8) last x weeks")
+    print("9) week x ago")
 
     from_date = datetime.now()
     to_date = datetime.now()
@@ -75,6 +76,9 @@ def input_range_option():
     elif option == 8:
         weeks = int(arguments.pop(0)) if len(arguments) > 0 else safe_input("Last weeks: ")
         from_date, to_date = core.last_weeks(weeks)
+    elif option == 9:
+        weeks = int(arguments.pop(0)) if len(arguments) > 0 else safe_input("Prev week: ")
+        from_date, to_date = core.prev_week(weeks)
 
     return from_date, to_date
 
@@ -141,10 +145,16 @@ csv_file_path, html_file_path, pdf_file_path = compute_file_paths()
 csv_file_path_latest, html_file_path_latest, pdf_file_path_latest = compute_file_paths_latest()
 create_directories(directory_name)
 result = core.execute(picked_cal_ids, from_date, to_date, filter)
-print_csv(result, csv_file_path, output_format)
-print_csv(result, csv_file_path_latest, output_format)
-print_pdf_and_html(result, pdf_file_path, html_file_path)
 
-print("From", from_date)
-print("To", to_date)
-print(f"Saved to: \n{csv_file_path_latest} \n{csv_file_path} \n{pdf_file_path} \n{html_file_path}")
+if len(result.by_date) == 0 or len(result.by_task) == 0:
+    print("From", from_date)
+    print("To", to_date)
+    print("No results found")
+else:
+    print_csv(result, csv_file_path, output_format)
+    print_csv(result, csv_file_path_latest, output_format)
+    print_pdf_and_html(result, pdf_file_path, html_file_path)
+
+    print("From", from_date)
+    print("To", to_date)
+    print(f"Saved to: \n{csv_file_path_latest} \n{csv_file_path} \n{pdf_file_path} \n{html_file_path}")
