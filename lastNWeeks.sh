@@ -22,3 +22,7 @@ cp out/health/csv/latest.csv out/health.csv
 # Flow
 venv/bin/python ./cli.py 17 8 $LAST_N_WEEKS "" 1
 cp out/flow/csv/latest.csv out/flow.csv
+
+# Psychology
+venv/bin/python ./cli.py 18 8 $LAST_N_WEEKS "" 1
+cp out/psychology/csv/latest.csv out/psychology.csv
