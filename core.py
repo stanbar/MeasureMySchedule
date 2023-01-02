@@ -33,7 +33,7 @@ def last_days(last_days: int):
 
 def from_to(month_from: int, month_to: int, year=None):
     from_date = (
-        datetime(year=datetime.now().year, month=month_from, day=1, tzinfo=timezone.utc)
+            datetime(year=year if year is not None else datetime.now().year, month=month_from, day=1, tzinfo=timezone.utc)
         .astimezone()
         .replace(hour=0, minute=0)
     )
@@ -47,7 +47,7 @@ def from_to(month_from: int, month_to: int, year=None):
         )
 
     to_date = (
-            datetime(year=datetime.now().year, month=month_to, day=1, tzinfo=timezone.utc) + relativedelta(months=1) - relativedelta(minutes=1)
+            datetime(year=year if year is not None else datetime.now().year, month=month_to, day=1, tzinfo=timezone.utc) + relativedelta(months=1) - relativedelta(minutes=1)
     )
 
     return from_date, to_date
